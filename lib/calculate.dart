@@ -28,7 +28,7 @@ class _CalculateState extends State<Calculate> {
   List valueVariableFormal = [];
   List kindValueVariableFormal = [];
   bool? temp;
-  String error = "0";
+  String error = "null";
   String? catchError;
   int? type;
   String? vari;
@@ -566,7 +566,7 @@ class _CalculateState extends State<Calculate> {
                             width: 10,
                           ),
                           //call function to calculate the result
-                          _nControllers![0].text != ""
+                          _nControllers![0].text != "" || type == 1
                               ? IconButton(
                                   onPressed: () async {
                                     valueList = [];
