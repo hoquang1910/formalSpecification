@@ -1,4 +1,4 @@
-package com.example.terminal_app
+package com.example.fomal_specification
 
 import io.flutter.embedding.android.FlutterActivity
 
