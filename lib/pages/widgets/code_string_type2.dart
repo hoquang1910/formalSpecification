@@ -156,7 +156,9 @@ class CodeStringType2 extends StatelessWidget {
               style: textStyleCode.apply(color: codeColor.operatorColor),
             ),
             TextSpan(
-              text: getFromValue(
+              text:  getFromValue(
+                  getIndexAndValueVariable().values.elementAt(index)).length == 1 ? (int.parse(getFromValue(
+                  getIndexAndValueVariable().values.elementAt(index))) - 1).toString() : getFromValue(
                   getIndexAndValueVariable().values.elementAt(index)),
               style: textStyleCode.apply(color: codeColor.argumentColor),
             ),
