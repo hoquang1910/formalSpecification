@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:fomal_specification/implicit_structure/implicit_structure.dart';
-import 'package:fomal_specification/pages/result/show_input.dart';
+import 'package:fomal_specification/pages/output_page.dart';
 import 'package:fomal_specification/pages/widgets/alert_dialog.dart';
 import 'package:fomal_specification/pages/widgets/code_string_type1.dart';
 import 'package:fomal_specification/pages/widgets/code_string_type2.dart';
@@ -52,15 +52,25 @@ class _HomePageState extends State<HomePage> {
                 color: themeProvider.getTheme.colorScheme.secondary,
               ),
               onPressed: () {
-                print(implicitStructure.getIndexAndValueVariableType2());
                 isRun = true;
-                if (isGenerateCode) {
-                  final RichText? richText =
-                      richTextKey.currentWidget as RichText;
-                  s = "${richText?.text.toPlainText()}";
-                  // debugPrint(s);
-                }
-                setState(() {});
+                // if (isGenerateCode) {
+                //   final RichText? richText =
+                //       richTextKey.currentWidget as RichText;
+                //   s = "${richText?.text.toPlainText()}";
+                //   // debugPrint(s);
+                // }
+                Navigator.push(context, MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return OutputScreen(
+                      type: inputTextController.text.contains("VM") ||
+                              inputTextController.text.contains("TT")
+                          ? 2
+                          : 1,
+                      codeJsVisibility: isRun,
+                      inputText: inputTextController.text,
+                    );
+                  },
+                ));
               },
             )
           : null,
@@ -175,8 +185,8 @@ class _HomePageState extends State<HomePage> {
                     height: 25.0,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        onPrimary: const ui.Color.fromARGB(255, 19, 176, 187),
-                        //border width and color
+                        foregroundColor:
+                            const ui.Color.fromARGB(255, 19, 176, 187),
                         elevation: 3, //elevation of button
                         shape: RoundedRectangleBorder(
                           //to set border radius to button
@@ -224,16 +234,6 @@ class _HomePageState extends State<HomePage> {
                       )
                     : Container(),
               ),
-              isGenerateCode
-                  ? showInput(
-                      type: inputTextController.text.contains("VM") ||
-                              inputTextController.text.contains("TT")
-                          ? 2
-                          : 1,
-                      codeJsVisibility: isRun,
-                      inputText: inputTextController.text,
-                    )
-                  : Container()
             ],
           ),
         ),
@@ -265,7 +265,9 @@ class _HomePageState extends State<HomePage> {
             ImplicitStructure(text: inputTextController.text);
         final result = await FilePicker.platform.pickFiles(
             type: FileType.custom, allowedExtensions: ['txt', 'doc']);
-
+        setState(() {
+          isGenerateCode = false;
+        });
         if (result == null) return;
 
         //open single file
@@ -275,12 +277,17 @@ class _HomePageState extends State<HomePage> {
           if (value != "") {
             inputTextController.text =
                 implicitStructure.normalizeExpressionString(value);
-            numberOfLines = '\n'.allMatches(value).length;
+            final span = TextSpan(text: value);
+
+            final tp = TextPainter(
+                text: span, maxLines: 3, textDirection: TextDirection.ltr);
+
+            List<ui.LineMetrics> lines = tp.computeLineMetrics();
+            numberOfLines = lines.length;
+            // numberOfLines = '\n'.allMatches(value).length;
           }
         });
-        setState(() {
-          isGenerateCode = false;
-        });
+
         break;
       case MenuItems.itemNewFile:
         inputTextController.clear();
